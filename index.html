@@ -61,6 +61,15 @@
     margin-bottom: 16px;
   }
 
+  .target-display {
+    text-align: center;
+    color: #65c58a;
+    font-size: 23px;
+    font-weight: bold;
+    margin: 12px 0 20px;
+    overflow-wrap: anywhere;
+  }
+
   .progress-title {
     color: #b8c1bb;
     text-align: center;
@@ -185,6 +194,9 @@
   </div>
 
   <div class="panel">
+    <div class="progress-title">CURRENT TARGET</div>
+    <div class="target-display" id="targetDisplay">Treble 20</div>
+
     <div class="progress-title">SUCCESSFUL HITS</div>
     <div class="progress-number">
       <span id="hits">0</span>
@@ -248,6 +260,9 @@
       ? Math.round((hits / darts) * 100) + "%"
       : "—";
 
+    document.getElementById("targetDisplay").textContent =
+      targetInput.value.trim() || "No target entered";
+
     document.getElementById("hits").textContent = hits;
     document.getElementById("goalDisplay").textContent = goal;
     document.getElementById("darts").textContent = darts;
@@ -276,6 +291,8 @@
         "Ready when you are!";
     }
   }
+
+  targetInput.addEventListener("input", update);
 
   document.getElementById("hitButton").addEventListener("click", () => {
     if (finished) return;
@@ -312,4 +329,3 @@
 </script>
 </body>
 </html>
-

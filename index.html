@@ -2,136 +2,168 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Bulli Darts Practice</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bulli Darts Practice</title>
 
-<style>
-  * { box-sizing: border-box; }
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101715;
+      --panel: #1b2621;
+      --panel-hover: #24332c;
+      --accent: #8fd3a8;
+      --text: #f2f5f2;
+      --muted: #b7c4bc;
+    }
 
-  body {
-    margin: 0;
-    padding: 24px 18px;
-    background: #151a19;
-    color: #f4f1e8;
-    font-family: Arial, sans-serif;
-  }
+    * {
+      box-sizing: border-box;
+    }
 
-  .app {
-    max-width: 480px;
-    margin: 0 auto;
-  }
+    body {
+      margin: 0;
+      padding: 24px 14px 40px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-  h1 {
-    text-align: center;
-    letter-spacing: 2px;
-    font-size: 28px;
-    margin: 24px 0 10px;
-  }
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+    }
 
-  .subtitle {
-    text-align: center;
-    color: #a8b0ab;
-    margin-bottom: 32px;
-    line-height: 1.5;
-  }
+    header {
+      text-align: center;
+      margin: 12px 0 36px;
+    }
 
-  .section-title {
-    color: #65c58a;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    margin: 24px 0 12px;
-  }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      letter-spacing: 1.5px;
+    }
 
-  .card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    background: #222a27;
-    border: 1px solid #37413c;
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 14px;
-    transition: border-color 0.2s, transform 0.2s;
-  }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
 
-  .card:hover {
-    border-color: #65c58a;
-    transform: translateY(-2px);
-  }
+    .tool-section {
+      margin-bottom: 34px;
+    }
 
-  .card h2 {
-    font-size: 19px;
-    margin: 0 0 8px;
-  }
+    .section-heading {
+      color: var(--accent);
+      font-size: 1.2rem;
+      letter-spacing: 1.5px;
+      border-bottom: 1px solid #34483c;
+      padding-bottom: 10px;
+      margin: 0 0 16px;
+    }
 
-  .card p {
-    font-size: 14px;
-    line-height: 1.5;
-    color: #a8b0ab;
-    margin: 0 0 14px;
-  }
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
 
-  .open {
-    color: #65c58a;
-    font-size: 13px;
-    font-weight: bold;
-  }
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background: var(--panel);
+      border: 1px solid #34483c;
+      border-radius: 15px;
+      padding: 20px;
+      color: var(--text);
+      text-decoration: none;
+      min-height: 175px;
+      transition: background 0.2s, border-color 0.2s;
+    }
 
-  .coming-soon {
-    opacity: 0.65;
-  }
+    .card:hover {
+      background: var(--panel-hover);
+      border-color: var(--accent);
+    }
 
-  footer {
-    text-align: center;
-    color: #78847c;
-    font-size: 12px;
-    margin-top: 32px;
-  }
-</style>
+    .card h3 {
+      font-size: 1.2rem;
+      margin: 0 0 10px;
+    }
+
+    .card p {
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0 0 18px;
+    }
+
+    .open {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-top: auto;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 
 <body>
-<div class="app">
+  <main>
+    <header>
+      <h1>BULLI DARTS</h1>
+      <p class="subtitle">Practice tools and darts game scorers</p>
+    </header>
 
-  <h1>BULLI DARTS PRACTICE</h1>
-  <div class="subtitle">
-    Practice with purpose.<br>
-    Track your progress. Improve your game.
-  </div>
+    <!-- PRACTICE TOOLS -->
+    <section class="tool-section">
+      <h2 class="section-heading">PRACTICE TOOLS</h2>
 
-  <div class="section-title">YOUR PRACTICE TOOLS</div>
+      <div class="app-grid">
+        <a class="card" href="./single-bed-practice/">
+          <h3>🎯 Single Bed Practice</h3>
+          <p>
+            Track how many darts it takes to hit your target
+            a set number of times. Monitor your hits and accuracy.
+          </p>
+          <span class="open">OPEN APP →</span>
+        </a>
 
-  <a class="card" href="./single-bed-count/">
-    <h2>🎯 Single Bed Practice</h2>
-    <p>
-      Track how many darts it takes to hit your target
-      a set number of times. Monitor your hits and accuracy.
-    </p>
-    <span class="open">OPEN APP →</span>
-  </a>
+        <!-- Add more practice tools here later -->
 
-  <<a class="card" href="./halve-it/">
-  <h2>🎯 Halve-It</h2>
-  <p>
-    Play Halve-It with up to six players.
-    Track scores across all 12 rounds, with
-    automatic halving on a miss.
-  </p>
-  <span class="open">OPEN APP →</span>
-</a>
+      </div>
+    </section>
 
-  <div class="card coming-soon">
-    <h2>📊 Scoring Tool</h2>
-    <p>More darts practice tools will be added here.</p>
-    <span class="open">COMING SOON</span>
-  </div>
+    <!-- SCORING TOOLS -->
+    <section class="tool-section">
+      <h2 class="section-heading">SCORING TOOLS</h2>
 
-  <footer>
-    Bulli Darts Practice
-  </footer>
+      <div class="app-grid">
+        <a class="card" href="./halve-it/">
+          <h3>🎯 Halve-It</h3>
+          <p>
+            Play Halve-It with up to six players.
+            Track scores across all 12 rounds, with
+            automatic halving on a miss.
+          </p>
+          <span class="open">OPEN APP →</span>
+        </a>
 
-</div>
+        <!-- Add more scoring tools here later -->
+
+      </div>
+    </section>
+
+    <footer>
+      Bulli Darts Practice
+    </footer>
+  </main>
 </body>
 </html>

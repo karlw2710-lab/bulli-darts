@@ -1,0 +1,404 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bulli Darts — Halve-It</title>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #101715;
+  --panel: #1b2621;
+  --panel2: #24332c;
+  --accent: #8fd3a8;
+  --text: #f2f5f2;
+  --muted: #b7c4bc;
+  --danger: #ff9b91;
+  --gold: #f4d06f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 20px 12px 36px;
+  background: var(--bg); color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+main { max-width: 900px; margin: auto; }
+header { text-align: center; margin: 8px 0 20px; }
+h1 { font-size: clamp(1.8rem,5vw,2.5rem); letter-spacing: 1.5px; margin: 0 0 6px; }
+.subtitle { color: var(--muted); margin: 0; }
+.topbar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
+a { color: var(--accent); text-decoration: none; }
+.panel { background: var(--panel); border-radius: 16px; padding: 18px; margin: 14px 0; }
+h2 { font-size: 1.15rem; margin: 0 0 13px; }
+label { display: block; color: var(--muted); font-size: .94rem; margin: 0 0 7px; }
+input, select {
+  width: 100%; background: #101715; color: var(--text);
+  border: 1px solid #405448; border-radius: 9px;
+  padding: 12px; font-size: 1rem;
+}
+button { border: 0; border-radius: 10px; padding: 12px 16px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+button:disabled { opacity: .4; cursor: not-allowed; }
+.primary { background: var(--accent); color: #102016; }
+.secondary { background: var(--panel2); color: var(--text); border: 1px solid #405448; }
+.miss { background: #512b2a; color: #ffe6e3; border: 1px solid #85433e; }
+.small { font-size: .85rem; color: var(--muted); }
+.players-inputs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+.player-input { display: none; }
+.player-input.visible { display: block; }
+.setup-row { display: grid; grid-template-columns: 160px 1fr; gap: 14px; align-items: end; margin-bottom: 16px; }
+.player-board { display: grid; grid-template-columns: repeat(auto-fit,minmax(125px,1fr)); gap: 10px; }
+.player-card { background: var(--panel); border: 2px solid #34483c; border-radius: 13px; padding: 13px; text-align: center; min-width: 0; }
+.player-card.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent) inset; }
+.player-card.winner { border-color: var(--gold); }
+.name { font-weight: bold; overflow-wrap: anywhere; }
+.total { font-size: 2.1rem; font-weight: 800; font-variant-numeric: tabular-nums; margin: 8px 0; }
+.round-pill { display: inline-block; background: var(--panel2); border: 1px solid #405448; border-radius: 999px; padding: 7px 12px; color: var(--accent); font-weight: bold; margin-bottom: 10px; }
+.target { font-size: clamp(2.4rem,8vw,4rem); font-weight: 900; margin: 0 0 5px; }
+.progress { height: 7px; background: #34483c; border-radius: 20px; overflow: hidden; margin: 14px 0; }
+.progress > div { height: 100%; background: var(--accent); width: 0; transition: width .2s; }
+.turn-line { font-size: 1.15rem; margin: 7px 0 15px; }
+.entry-row { display: grid; grid-template-columns: 1fr auto auto; gap: 9px; }
+.message { min-height: 24px; margin-top: 12px; color: var(--accent); font-weight: bold; line-height: 1.4; }
+.message.error { color: var(--danger); }
+.actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 12px; }
+.history { padding-left: 20px; margin: 0; color: var(--muted); }
+.history li { margin: 7px 0; }
+.rules { font-size: .92rem; color: var(--muted); line-height: 1.5; }
+.hidden { display: none !important; }
+@media(max-width:560px) {
+  .players-inputs { grid-template-columns: 1fr; }
+  .setup-row { grid-template-columns: 1fr; }
+  .entry-row { grid-template-columns: 1fr 1fr; }
+  .entry-row input { grid-column: 1 / -1; }
+  .entry-row button { width: 100%; }
+  .panel { padding: 14px; }
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>BULLI DARTS</h1>
+  <p class="subtitle">Halve-It</p>
+</header>
+
+<div class="topbar">
+  <a href="../">← Main menu</a>
+  <span class="small">12 rounds · Up to 6 players</span>
+</div>
+
+<section id="setup" class="panel">
+  <h2>Set up your game</h2>
+  <div class="setup-row">
+    <div>
+      <label for="playerCount">Number of players</label>
+      <select id="playerCount">
+        <option>1</option><option selected>2</option><option>3</option>
+        <option>4</option><option>5</option><option>6</option>
+      </select>
+    </div>
+    <div class="small">Enter names before starting. The order here determines the throwing order.</div>
+  </div>
+
+  <div class="players-inputs" id="nameFields">
+    <div class="player-input visible" data-player="0">
+      <label for="pname0">Player 1</label><input id="pname0" maxlength="24" value="Player 1">
+    </div>
+    <div class="player-input visible" data-player="1">
+      <label for="pname1">Player 2</label><input id="pname1" maxlength="24" value="Player 2">
+    </div>
+    <div class="player-input" data-player="2">
+      <label for="pname2">Player 3</label><input id="pname2" maxlength="24" value="Player 3">
+    </div>
+    <div class="player-input" data-player="3">
+      <label for="pname3">Player 4</label><input id="pname3" maxlength="24" value="Player 4">
+    </div>
+    <div class="player-input" data-player="4">
+      <label for="pname4">Player 5</label><input id="pname4" maxlength="24" value="Player 5">
+    </div>
+    <div class="player-input" data-player="5">
+      <label for="pname5">Player 6</label><input id="pname5" maxlength="24" value="Player 6">
+    </div>
+  </div>
+  <div class="actions"><button class="primary" id="startBtn">START GAME</button></div>
+</section>
+
+<section id="game" class="hidden">
+  <div class="panel">
+    <div class="round-pill" id="roundNumber">ROUND 1 OF 12</div>
+    <div class="target" id="target">13</div>
+    <div class="small">CURRENT TARGET</div>
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="turn-line">Up now: <strong id="currentPlayer"></strong></div>
+
+    <label for="scoreInput">Enter the points scored in this visit</label>
+    <div class="entry-row">
+      <input type="number" id="scoreInput" min="0" max="180" step="1" inputmode="numeric" placeholder="Score (e.g. 26)">
+      <button class="primary" id="submitBtn">ADD SCORE</button>
+      <button class="miss" id="missBtn">MISS — HALVE</button>
+    </div>
+
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+    <div class="actions">
+      <button class="secondary" id="undoBtn" disabled>↶ Undo</button>
+      <button class="secondary" id="restartBtn">End game / new game</button>
+    </div>
+  </div>
+
+  <div class="panel"><h2>Scores</h2><div class="player-board" id="scoreboard"></div></div>
+  <div class="panel">
+    <h2>Turn history</h2>
+    <ol class="history" id="history"></ol>
+    <p class="small" id="emptyHistory">Scores will appear here as you play.</p>
+  </div>
+</section>
+
+<section id="results" class="panel hidden">
+  <h2>Game over</h2>
+  <div class="target" id="winnerHeading">Winner!</div>
+  <p id="winnerDetails"></p>
+  <div class="player-board" id="finalBoard"></div>
+  <div class="actions">
+    <button class="primary" id="playAgainBtn">PLAY AGAIN</button>
+    <button class="secondary" id="setupBtn">Change players</button>
+  </div>
+</section>
+
+<section class="panel rules">
+  <strong>How to play:</strong> Each player takes one visit (three darts) at each target. Enter the visit's total score and press <strong>ADD SCORE</strong> to add it to their running total. Press <strong>MISS — HALVE</strong> if they miss the target; their entire current total is halved and rounded up to the nearest whole number. The game ends after everyone has had their visit at Bull.
+</section>
+</main>
+
+<script>
+(() => {
+  const rounds = [
+    '13', '14', 'Double', '15', '16', 'Triple',
+    '17', '18', 'Three in a Bed', '19', '20', 'Bull'
+  ];
+
+  let players = [];
+  let roundIndex = 0;
+  let playerIndex = 0;
+  let history = [];
+  let snapshots = [];
+  let finished = false;
+
+  const $ = id => document.getElementById(id);
+  const show = el => el.classList.remove('hidden');
+  const hide = el => el.classList.add('hidden');
+
+  function showMessage(text, error = false) {
+    $('message').textContent = text;
+    $('message').classList.toggle('error', error);
+  }
+
+  function updateNameFields() {
+    const count = Number($('playerCount').value);
+    document.querySelectorAll('.player-input').forEach(el => {
+      el.classList.toggle('visible', Number(el.dataset.player) < count);
+    });
+  }
+
+  function snapshot() {
+    snapshots.push({
+      players: players.map(p => ({...p})),
+      roundIndex,
+      playerIndex,
+      history: [...history],
+      finished
+    });
+  }
+
+  function render() {
+    $('roundNumber').textContent = `ROUND ${roundIndex + 1} OF ${rounds.length}`;
+    $('target').textContent = rounds[roundIndex];
+    $('currentPlayer').textContent = players[playerIndex]?.name || '';
+    $('progressBar').style.width = `${(roundIndex / rounds.length) * 100}%`;
+
+    $('scoreboard').innerHTML = '';
+    players.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'player-card' + (i === playerIndex ? ' active' : '');
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = p.name;
+
+      const total = document.createElement('div');
+      total.className = 'total';
+      total.textContent = p.score;
+
+      const small = document.createElement('div');
+      small.className = 'small';
+      small.textContent = i === playerIndex ? 'UP NOW' : 'TOTAL SCORE';
+
+      card.append(name, total, small);
+      $('scoreboard').appendChild(card);
+    });
+
+    $('history').innerHTML = '';
+    history.slice().reverse().forEach(entry => {
+      const li = document.createElement('li');
+      li.textContent = entry;
+      $('history').appendChild(li);
+    });
+    $('emptyHistory').classList.toggle('hidden', history.length > 0);
+    $('undoBtn').disabled = snapshots.length === 0;
+  }
+
+  function beginGame() {
+    const count = Number($('playerCount').value);
+    players = [];
+
+    for (let i = 0; i < count; i++) {
+      const entered = $('pname' + i).value.trim();
+      players.push({name: entered || `Player ${i + 1}`, score: 0});
+    }
+
+    roundIndex = 0;
+    playerIndex = 0;
+    history = [];
+    snapshots = [];
+    finished = false;
+
+    hide($('setup'));
+    hide($('results'));
+    show($('game'));
+
+    showMessage(`${players[0].name} throws first.`);
+    render();
+    $('scoreInput').value = '';
+    $('scoreInput').focus();
+  }
+
+  function advance(entry) {
+    history.push(entry);
+
+    if (playerIndex < players.length - 1) {
+      playerIndex++;
+    } else if (roundIndex < rounds.length - 1) {
+      roundIndex++;
+      playerIndex = 0;
+    } else {
+      finished = true;
+      showResults();
+      return;
+    }
+
+    $('scoreInput').value = '';
+    render();
+    $('scoreInput').focus();
+  }
+
+  function submitScore() {
+    if (finished) return;
+
+    const raw = $('scoreInput').value.trim();
+    const value = Number(raw);
+
+    if (raw === '' || !Number.isInteger(value) || value < 0 || value > 180) {
+      showMessage('Enter a whole-number score from 0 to 180.', true);
+      return;
+    }
+
+    snapshot();
+    const p = players[playerIndex];
+    const before = p.score;
+    p.score += value;
+
+    const entry = `Round ${roundIndex + 1} (${rounds[roundIndex]}) — ${p.name}: +${value} (${before} → ${p.score})`;
+    showMessage(`${p.name} adds ${value}. Total: ${p.score}.`);
+    advance(entry);
+  }
+
+  function halve() {
+    if (finished) return;
+
+    snapshot();
+    const p = players[playerIndex];
+    const before = p.score;
+
+    // Halve the running score and round UP to a whole number.
+    p.score = Math.ceil(before / 2);
+
+    const entry = `Round ${roundIndex + 1} (${rounds[roundIndex]}) — ${p.name}: MISS (${before} → ${p.score})`;
+    showMessage(`${p.name}'s score is halved to ${p.score}.`);
+    advance(entry);
+  }
+
+  function showResults() {
+    hide($('game'));
+    show($('results'));
+
+    const high = Math.max(...players.map(p => p.score));
+    const winners = players.filter(p => p.score === high);
+
+    $('winnerHeading').textContent =
+      winners.length === 1 ? `${winners[0].name} wins!` : "It's a tie!";
+
+    $('winnerDetails').textContent =
+      `Final score: ${high}` +
+      (winners.length > 1 ? ` each for ${winners.map(p => p.name).join(', ')}` : '') +
+      '.';
+
+    $('finalBoard').innerHTML = '';
+    [...players].sort((a, b) => b.score - a.score).forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'player-card' + (p.score === high ? ' winner' : '');
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.textContent = p.name;
+
+      const score = document.createElement('div');
+      score.className = 'total';
+      score.textContent = p.score;
+
+      card.append(name, score);
+      $('finalBoard').appendChild(card);
+    });
+  }
+
+  $('playerCount').addEventListener('change', updateNameFields);
+  $('startBtn').addEventListener('click', beginGame);
+  $('submitBtn').addEventListener('click', submitScore);
+  $('scoreInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') submitScore();
+  });
+  $('missBtn').addEventListener('click', halve);
+
+  $('undoBtn').addEventListener('click', () => {
+    if (!snapshots.length) return;
+
+    const s = snapshots.pop();
+    players = s.players;
+    roundIndex = s.roundIndex;
+    playerIndex = s.playerIndex;
+    history = s.history;
+    finished = s.finished;
+
+    hide($('results'));
+    show($('game'));
+    showMessage('Last action undone.');
+    render();
+    $('scoreInput').value = '';
+    $('scoreInput').focus();
+  });
+
+  function returnToSetup() {
+    if (!confirm('End this game and return to setup? Current scores will be lost.')) return;
+    hide($('game'));
+    hide($('results'));
+    show($('setup'));
+  }
+
+  $('restartBtn').addEventListener('click', returnToSetup);
+  $('setupBtn').addEventListener('click', returnToSetup);
+  $('playAgainBtn').addEventListener('click', beginGame);
+
+  updateNameFields();
+})();
+</script>
+</body>
+</html>

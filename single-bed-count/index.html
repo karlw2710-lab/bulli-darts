@@ -1,1 +1,331 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Darts Practice Tracker</title>
+
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 20px;
+    background: #151a19;
+    color: #f4f1e8;
+    font-family: Arial, sans-serif;
+  }
+
+  .app {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    text-align: center;
+    letter-spacing: 3px;
+    font-size: 25px;
+    margin: 12px 0 8px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #a8b0ab;
+    margin-bottom: 28px;
+  }
+
+  .panel {
+    background: #222a27;
+    border: 1px solid #37413c;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    color: #bac3bd;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #48564e;
+    background: #151a19;
+    color: white;
+    font-size: 17px;
+    margin-bottom: 16px;
+  }
+
+  .target-display {
+    text-align: center;
+    color: #65c58a;
+    font-size: 23px;
+    font-weight: bold;
+    margin: 12px 0 20px;
+    overflow-wrap: anywhere;
+  }
+
+  .progress-title {
+    color: #b8c1bb;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .progress-number {
+    text-align: center;
+    font-size: 44px;
+    font-weight: bold;
+    margin: 12px 0;
+  }
+
+  .bar {
+    height: 9px;
+    background: #3a443e;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #65c58a;
+    transition: width 0.2s;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    text-align: center;
+  }
+
+  .stat {
+    background: #151a19;
+    border-radius: 9px;
+    padding: 14px 5px;
+  }
+
+  .stat-value {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: 7px;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: #a8b0ab;
+    line-height: 1.4;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  button {
+    border: none;
+    border-radius: 10px;
+    padding: 18px 10px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:active { transform: scale(0.98); }
+
+  .hit {
+    background: #65c58a;
+    color: #102016;
+  }
+
+  .miss {
+    background: #37413c;
+    color: white;
+    border: 1px solid #526057;
+  }
+
+  .reset {
+    width: 100%;
+    background: transparent;
+    color: #e59a91;
+    border: 1px solid #8b514b;
+    margin-top: 12px;
+    padding: 13px;
+    font-size: 14px;
+  }
+
+  .message {
+    text-align: center;
+    min-height: 24px;
+    margin-top: 16px;
+    color: #65c58a;
+    font-weight: bold;
+  }
+
+  .note {
+    color: #8f9a93;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.6;
+    margin-top: 20px;
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+  <h1>BULLI DARTS PRACTICE</h1>
+  <div class="subtitle">Hey Bulli - let's practice.</div>
+
+  <div class="panel">
+    <label for="target">What are you practising?</label>
+    <input id="target" type="text" value="Treble 20"
+           placeholder="e.g. Double 16">
+
+    <label for="goal">Number of successful hits to achieve</label>
+    <input id="goal" type="number" min="1" max="10000" value="20">
+  </div>
+
+  <div class="panel">
+    <div class="progress-title">CURRENT TARGET</div>
+    <div class="target-display" id="targetDisplay">Treble 20</div>
+
+    <div class="progress-title">SUCCESSFUL HITS</div>
+    <div class="progress-number">
+      <span id="hits">0</span>
+      <span style="color:#78847c"> / </span><span id="goalDisplay">20</span>
+    </div>
+    <div class="bar">
+      <div class="bar-fill" id="progress"></div>
+    </div>
+    <div class="message" id="message">Ready when you are!</div>
+  </div>
+
+  <div class="panel">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="darts">0</div>
+        <div class="stat-label">DARTS THROWN</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="remaining">20</div>
+        <div class="stat-label">HITS TO GO</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="accuracy">—</div>
+        <div class="stat-label">ACCURACY</div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="hit" id="hitButton">✓ HIT</button>
+      <button class="miss" id="missButton">✕ MISS</button>
+    </div>
+
+    <button class="reset" id="resetButton">↻ RESET SESSION</button>
+  </div>
+
+  <div class="note">
+    Count one dart per button press.<br>
+    Your session stays open until you reset it.
+  </div>
+</div>
+
+<script>
+  let darts = 0;
+  let hits = 0;
+  let finished = false;
+
+  const targetInput = document.getElementById("target");
+  const goalInput = document.getElementById("goal");
+
+  function getGoal() {
+    const value = Number(goalInput.value);
+    return Number.isFinite(value) && value >= 1
+      ? Math.floor(value)
+      : 1;
+  }
+
+  function update() {
+    const goal = getGoal();
+    const remaining = Math.max(0, goal - hits);
+    const accuracy = darts > 0
+      ? Math.round((hits / darts) * 100) + "%"
+      : "—";
+
+    document.getElementById("targetDisplay").textContent =
+      targetInput.value.trim() || "No target entered";
+
+    document.getElementById("hits").textContent = hits;
+    document.getElementById("goalDisplay").textContent = goal;
+    document.getElementById("darts").textContent = darts;
+    document.getElementById("remaining").textContent = remaining;
+    document.getElementById("accuracy").textContent = accuracy;
+
+    document.getElementById("progress").style.width =
+      Math.min(100, (hits / goal) * 100) + "%";
+
+    document.getElementById("hitButton").disabled = finished;
+    document.getElementById("missButton").disabled = finished;
+
+    document.getElementById("hitButton").style.opacity =
+      finished ? "0.5" : "1";
+    document.getElementById("missButton").style.opacity =
+      finished ? "0.5" : "1";
+
+    if (finished) {
+      document.getElementById("message").textContent =
+        "🎯 Goal achieved in " + darts + " darts!";
+    } else if (hits > 0) {
+      document.getElementById("message").textContent =
+        "Keep going — " + remaining + " hits to go!";
+    } else {
+      document.getElementById("message").textContent =
+        "Ready when you are!";
+    }
+  }
+
+  targetInput.addEventListener("input", update);
+
+  document.getElementById("hitButton").addEventListener("click", () => {
+    if (finished) return;
+    darts++;
+    hits++;
+
+    if (hits >= getGoal()) finished = true;
+    update();
+  });
+
+  document.getElementById("missButton").addEventListener("click", () => {
+    if (finished) return;
+    darts++;
+    update();
+  });
+
+  document.getElementById("resetButton").addEventListener("click", () => {
+    darts = 0;
+    hits = 0;
+    finished = false;
+    update();
+  });
+
+  goalInput.addEventListener("change", () => {
+    if (hits >= getGoal()) {
+      finished = true;
+    } else {
+      finished = false;
+    }
+    update();
+  });
+
+  update();
+</script>
+</body>
+</html>
